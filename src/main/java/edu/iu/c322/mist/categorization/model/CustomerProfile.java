@@ -1,8 +1,10 @@
 package edu.iu.c322.mist.categorization.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class CustomerProfile {
@@ -10,13 +12,20 @@ public class CustomerProfile {
     @GeneratedValue(strategy = GenerationType.AUTO)
     int id;
 
+    @NotEmpty
     private String username;
+
+    @NotEmpty
     private String email;
+
+    @NotEmpty
     private String password;
 
+    @NotEmpty
     @OneToMany(cascade = CascadeType.ALL)
     List<Game> ownedGames;
 
+    @NotEmpty
     @OneToMany(cascade = CascadeType.ALL)
     List<GameCategory> customCategories;
 
@@ -58,5 +67,18 @@ public class CustomerProfile {
 
     public void setCustomCategories(List<GameCategory> customCategories) {
         this.customCategories = customCategories;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CustomerProfile that = (CustomerProfile) o;
+        return id == that.id && username.equals(that.username) && email.equals(that.email) && password.equals(that.password) && ownedGames.equals(that.ownedGames) && customCategories.equals(that.customCategories);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, email, password, ownedGames, customCategories);
     }
 }
