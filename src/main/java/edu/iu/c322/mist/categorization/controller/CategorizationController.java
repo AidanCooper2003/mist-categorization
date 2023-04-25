@@ -1,16 +1,16 @@
 package edu.iu.c322.mist.categorization.controller;
 
+import edu.iu.c322.mist.categorization.model.CategoryDescription;
 import edu.iu.c322.mist.categorization.model.CustomerProfile;
+import edu.iu.c322.mist.categorization.model.Game;
 import edu.iu.c322.mist.categorization.model.GameCategory;
 import edu.iu.c322.mist.categorization.repository.GameListRepository;
 import edu.iu.c322.mist.categorization.repository.UserListRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -40,5 +40,24 @@ public class CategorizationController {
             }
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category of this ID does not exist for this user.");
+    }
+
+    @PostMapping("/{username}")
+    public void createCategory(@PathVariable String username, @RequestBody CategoryDescription category){
+        CustomerProfile user = userRepository.getCustomerProfileByUsernameEquals(username);
+        List<GameCategory> categories = user.getCustomCategories();
+        GameCategory newCategory = new GameCategory();
+        if (newCategory.getTitle().equals("")){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category title can not be empty");
+        }
+        if (newCategory.getPlacement() <= 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category placement can not be below 1");
+        }
+        newCategory.setTitle(category.title());
+        newCategory.setPlacement(category.placement());
+        newCategory.setGames(new ArrayList<>());
+        categories.add(newCategory);
+        user.setCustomCategories(categories);
+        userRepository.save(user);
     }
 }

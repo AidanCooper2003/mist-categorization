@@ -15,11 +15,21 @@ public class GameCategory {
     @NotEmpty
     String title;
 
+    int placement;
+
     @OneToMany(cascade = CascadeType.ALL)
     List<Game> games;
 
     public int getId(){
         return id;
+    }
+
+    public int getPlacement() {
+        return placement;
+    }
+
+    public void setPlacement(int placement) {
+        this.placement = placement;
     }
 
     public String getTitle() {
@@ -43,7 +53,7 @@ public class GameCategory {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         GameCategory that = (GameCategory) o;
-        return id == that.id && title.equals(that.title) && games.equals(that.games);
+        return id == that.id && title.equals(that.title) && games.equals(that.games) && placement == that.placement;
     }
 
     @Override
