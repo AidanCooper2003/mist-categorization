@@ -18,6 +18,10 @@ public class GameCategory {
     @OneToMany(cascade = CascadeType.ALL)
     List<Game> games;
 
+    public int getId(){
+        return id;
+    }
+
     public String getTitle() {
         return title;
     }
