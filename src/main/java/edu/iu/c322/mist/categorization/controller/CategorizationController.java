@@ -60,4 +60,43 @@ public class CategorizationController {
         user.setCustomCategories(categories);
         userRepository.save(user);
     }
+
+    @DeleteMapping("/{username}/{categoryId}")
+    public void deleteCategory(@PathVariable String username, @PathVariable int categoryId){
+        CustomerProfile user = userRepository.getCustomerProfileByUsernameEquals(username);
+        GameCategory category = null;
+        for (GameCategory c : user.getCustomCategories()) {
+            if (c.getId() == categoryId){
+                category = c;
+                break;
+            }
+        }
+        if (category == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category of this ID does not exist for this user.");
+        }
+        user.getCustomCategories().remove(category);
+        userRepository.save(user);
+    }
+
+
+    // NOTE: This is unfinished, request body will be sent with IDs, not instances
+    // of games.
+    @PutMapping("/{username}")
+    public void modifyCategory(@PathVariable String username, @RequestBody GameCategory newCategory){
+        CustomerProfile user = userRepository.getCustomerProfileByUsernameEquals(username);
+        GameCategory category = null;
+        for (GameCategory c : user.getCustomCategories()) {
+            if (c.getId() == newCategory.getId()){
+                category = c;
+                break;
+            }
+        }
+        if (category == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category of this ID does not exist for this user.");
+        }
+        category.setPlacement(newCategory.getPlacement());
+        category.setTitle(newCategory.getTitle());
+        category.setGames(newCategory.getGames());
+        userRepository.save(user);
+    }
 }
